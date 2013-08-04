@@ -65,7 +65,7 @@ Start the GUI using the command line call:
 
 You must load a gender list and load the files you wish to process in the GUI and set the output directory before clicking the Process button.
 
-### Liscense
+### License
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
