@@ -183,8 +183,8 @@ def parse_ungendered_sheet (inputText, genderDefinitions) :
         if characterNumber in genderDefs.keys() :
             
             shouldUseFemale = genderDefs[characterNumber][1]
-            femaleTerm      = matchInfo.group(2)
-            maleTerm        = matchInfo.group(3)
+            femaleTerm      = matchInfo.group(2).strip()
+            maleTerm        = matchInfo.group(3).strip()
             toReturn        = femaleTerm if shouldUseFemale else maleTerm
             
             if printWarnings :
