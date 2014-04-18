@@ -11,7 +11,7 @@ There are currently two ways to use the utility: it can be run purely via the co
 
 The utility can currently handle txt and rtf files. It's not particularly smart about how it handles rtf documents, so there are some known bugs in how formatting spanning the gender text markup can be broken up during processing. 
 
-Note: As of version 0.5 the gender_swap untility can handle two neutral gender options (they and ze) as well as male and female. The format of the gender-list file has changed slightly to support this feature.
+Note: As of version 0.5 the gender_swap utility can handle two neutral gender options (they and ze) as well as male and female. The format of the gender-list file has changed slightly to support this feature.
 
 ### Setting Up Your Files
 
