@@ -5,11 +5,13 @@ A tool for swapping genders in LARP materials using simple markup syntax.
 
 -----------------------
 
-The gender_swap utility is a tool for setting gendered text in multiple files so that it remains consistent. It was created to allow writers of Live Action RolePlaying Games (LARPs) change the genders of multiple characters based on who was cast in those roles.
+The gender_swap utility is a tool for setting gendered text in multiple files so that it remains consistent. It was created to allow writers of Live Action RolePlaying Games (LARPs) to change the genders of multiple characters based on who was cast in those roles.
 
 There are currently two ways to use the utility: it can be run purely via the command line or it includes a GUI that can be used. In order to use the GUI you will need to install PyQt4. The pure command line version should run fine whether or not you have PyQt4 on your system.
 
 The utility can currently handle txt and rtf files. It's not particularly smart about how it handles rtf documents, so there are some known bugs in how formatting spanning the gender text markup can be broken up during processing. 
+
+Note: As of version 0.5 the gender_swap untility can handle two neutral gender options (they and ze) as well as male and female. The format of the gender-list file has changed slightly to support this feature.
 
 ### Setting Up Your Files
 
@@ -17,33 +19,35 @@ In order to gender the text in your files, you'll need to use some very simple m
 
 The project comes with an example gender-list. Your file can be named whatever you want but it must be a .txt file. For each character whose gender can change, you must assign them a unique character number and have a line in your gender-list in the form:
 
-    Character Name:   Number: Female or Male
+    Character Name:   Number: possible genders for this character separated by /'s: Female or Male or They or Ze
 
 The number must be an integer. An example line might look like:
 
-    Joe: 02: Male
+    Joe: 02: female/male/neutral they: Male
+
+The possible gender options should be in the order you intend to list them for any text gendered for Joe in character sheets.
 
 In other documents that mention Joe you would need to identify text that depends on his gender. For example:
 
     Joe was an enterprising young man.
 
-For each instance of gendered text, put this markup with the options for male and female versions of the character:
+For each instance of gendered text, put this markup with the options for alternate gendered versions of the character. Because Joe is defined as having the options "female/male/neutral they" This would look like:
 
-    [Character Number: Female Text / Male Text]
+    [Character Number: Female Text / Male Text / Neutral They Text]
 
 In our example the sentence might become:
 
-    Joe was an enterprising young [02: woman/man].
+    Joe was an enterprising young [02: woman/man/person].
 
-You can also replace larger chunks of text. The markup can span multiple lines or even paragraphs. If you're using rtf, the markup can't span formatting like bold, so be careful about that. 
+You can also replace larger chunks of text. The markup can span multiple lines or even paragraphs. If you're using rtf, the markup can't span half of formatting like bold, so be careful about that. 
 
 The utility also offers the option to gender the file names themselves (especially handy for character sheet files where the character's name changes). The syntax for this is:
 
-    character number.female text.male text.whatever text you like.rtf or txt
+    character number.female text.male text.other gender text.whatever text you like.rtf or txt
 
 So Joe's sheet file name might look like:
 
-    02.Josephine.Joe.Hunter_sheet.txt
+    02.Josephine.Joe.J.Hunter_sheet.txt
 
 When processed with Joe set to Male in the gender list, it would become:
 

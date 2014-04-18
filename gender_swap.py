@@ -4,7 +4,7 @@ The purpose of this program is to gender swap LARP character sheets.
 The sheets are expected to be in .txt or .rtf formats and a gendersList.txt
 file defining the genders to select is expected.
 
-Copyright Eva Schiffer 2012 - 2013
+Copyright Eva Schiffer 2012 - 2014
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@ python -m gender_swap gui
     
     # display the version
     if options.version :
-        print ("gender_swap v.0.4 \n") # because having a version history is cool
+        print ("gender_swap v.0.5 \n") # because having a version history is cool
 
     # set up the commands dictionary
     commands = {}
@@ -91,20 +91,18 @@ python -m gender_swap gui
                    + "defining the character's genders.")
             return 1
         
-        print ("opening and parsing gender list: " + options.genderList)
+        print ("Opening and parsing gender list: " + options.genderList)
         genderListFile = open(options.genderList, "r")
-        genderDefinitions = swap_util.parse_genderlist_file(genderListFile.readlines())
+        genderDefinitions, genderOrdering = swap_util.parse_genderlist_file(genderListFile.readlines())
         genderListFile.close()
-        
-        #print genderDefinitions
         
         # create the output directory if needed
         if not os.path.exists(options.outDirectory):
-            print "making output directory: " + options.outDirectory
+            print "Making output directory: " + options.outDirectory
             os.makedirs(options.outDirectory)
         
         # get a list of files in the input directory
-        print ("examining all input character sheets in: " + options.inputDirectory)
+        print ("Examining all input character sheets in: " + options.inputDirectory)
         possibleSheets = os.listdir(options.inputDirectory)
         
         # for each file in the input directory...
@@ -114,7 +112,7 @@ python -m gender_swap gui
             
             # check to see if it looks like the kind of sheet we're expecting
             print ("----------------------------------")
-            print ("examining file: " + possibleSheet)
+            print ("Examining file: " + possibleSheet)
             number      = possibleSheet.split('.')[0]
             _, fileType = os.path.splitext(possibleSheet)
             
@@ -125,7 +123,7 @@ python -m gender_swap gui
             # double check that this is a type of file we can process
             processThisSheet = (processThisSheet and
                                 (fileType == ".txt" or fileType == ".rtf"))
-            print "fileType: " + fileType
+            #print "fileType: " + fileType
             
             if processThisSheet :
                 
@@ -133,10 +131,11 @@ python -m gender_swap gui
                 swap_util.process_one_file(os.path.join(options.inputDirectory, possibleSheet),
                                            options.outDirectory,
                                            genderDefinitions,
+                                           genderOrdering,
                                            process_file_names=options.processName)
                 
             else :
-                print ("file " + possibleSheet
+                print ("File " + possibleSheet
                        + " does not match character sheet name patterns. "
                        + "This file will not be processed.")
         

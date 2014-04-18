@@ -2,7 +2,7 @@
 """
 This module includes gui code for presenting the gender swap utility.
 
-Copyright Eva Schiffer 2013
+Copyright Eva Schiffer 2013 - 2014
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -24,6 +24,9 @@ import os
 from PyQt4 import QtGui, QtCore
 
 from gender_swap_gui_model import GenderSwapGUIModel
+from constants             import *
+
+ARE_GENDERS_EDITABLE_IN_GUI = False
 
 class GenderedGUI (QtGui.QWidget) :
     """
@@ -246,9 +249,14 @@ class GenderedGUI (QtGui.QWidget) :
         
         self.model.change_other_settings (do_process_names=value)
     
-    def recieveUpdate (self, genderListFilePath=None, genderDefinitions=None,
-                       outputPath=None, searchDirectories=None,
-                       filesToProcessList=None, doProcessFileNames=None) :
+    def recieveUpdate (self,
+                       genderListFilePath=None,
+                       genderDefinitions=None,
+                       genderOrdering=None,
+                       outputPath=None,
+                       searchDirectories=None,
+                       filesToProcessList=None,
+                       doProcessFileNames=None) :
         """
         update the gui with information sent from the model
         
@@ -256,7 +264,7 @@ class GenderedGUI (QtGui.QWidget) :
         
         genderDefinitions is expected to be a dictionary in the form
         {
-            character number (int):   ["character name", isFemale (bool)],
+            character number (int):   ["character name", pronoun_set_constant],
         }
         """
         
@@ -278,34 +286,42 @@ class GenderedGUI (QtGui.QWidget) :
             # for each of the characters in the definitions, add a line to the table
             for charNum in sorted(genderDefinitions.keys(), reverse=True) :
                 
-                """ # FUTURE, allow this list to be edited in the GUI
-                self.genderListDisplayTable.insertRow(0)
-                
-                tempWidget = QtGui.QLineEdit()
-                tempWidget.setText( genderDefinitions[charNum][0] )
-                self.genderListDisplayTable.setCellWidget(0,0, tempWidget)
-                
-                tempWidget = QtGui.QLineEdit()
-                tempWidget.setText( str(charNum) )
-                # TODO, this must be an integer, add a formatter of some sort to enforce that
-                self.genderListDisplayTable.setCellWidget(0,1, tempWidget)
-                
-                tempWidget = QtGui.QComboBox()
-                tempWidget.addItems(["Female", "Male"])
-                tempWidget.setCurrentIndex(0 if genderDefinitions[charNum][1] else 1)
-                self.genderListDisplayTable.setCellWidget(0,2, tempWidget)
-                """
-                
-                self.genderListDisplayTable.insertRow(0)
-                tempWidget = QtGui.QTableWidgetItem( genderDefinitions[charNum][0] )
-                tempWidget.setFlags(QtCore.Qt.ItemIsEnabled)
-                self.genderListDisplayTable.setItem(0,0, tempWidget)
-                tempWidget = QtGui.QTableWidgetItem( str(charNum) )
-                tempWidget.setFlags(QtCore.Qt.ItemIsEnabled)
-                self.genderListDisplayTable.setItem(0,1, tempWidget)
-                tempWidget = QtGui.QTableWidgetItem( "Female" if genderDefinitions[charNum][1] else "Male" )
-                tempWidget.setFlags(QtCore.Qt.ItemIsEnabled)
-                self.genderListDisplayTable.setItem(0,2, tempWidget)
+                # for the moment this is a meta testing setting
+                if ARE_GENDERS_EDITABLE_IN_GUI :
+                    self.genderListDisplayTable.insertRow(0)
+                    
+                    tempWidget = QtGui.QLineEdit()
+                    tempWidget.setText( genderDefinitions[charNum][0] )
+                    self.genderListDisplayTable.setCellWidget(0,0, tempWidget)
+                    
+                    tempWidget = QtGui.QLineEdit()
+                    tempWidget.setText( str(charNum) )
+                    # TODO, this must be an integer, add a formatter of some sort to enforce that
+                    self.genderListDisplayTable.setCellWidget(0,1, tempWidget)
+                    
+                    tempWidget = QtGui.QComboBox()
+                    tempWidget.addItems(sorted(genderOrdering[charNum].values()))
+                    tempIndex = tempWidget.findText(genderDefinitions[charNum][1])
+                    tempWidget.setCurrentIndex(tempIndex)
+                    self.genderListDisplayTable.setCellWidget(0,2, tempWidget)
+                    
+                    # TODO, this isn't set up to respond correctly to editing
+                    
+                else : 
+                    
+                    self.genderListDisplayTable.insertRow(0)
+                    
+                    tempWidget = QtGui.QTableWidgetItem( genderDefinitions[charNum][0] )
+                    tempWidget.setFlags(QtCore.Qt.ItemIsEnabled)
+                    self.genderListDisplayTable.setItem(0,0, tempWidget)
+                    
+                    tempWidget = QtGui.QTableWidgetItem( str(charNum) )
+                    tempWidget.setFlags(QtCore.Qt.ItemIsEnabled)
+                    self.genderListDisplayTable.setItem(0,1, tempWidget)
+                    
+                    tempWidget = QtGui.QTableWidgetItem( genderDefinitions[charNum][1] )
+                    tempWidget.setFlags(QtCore.Qt.ItemIsEnabled)
+                    self.genderListDisplayTable.setItem(0,2, tempWidget)
                 
         
         # if we got a new output path update that

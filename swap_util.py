@@ -2,7 +2,7 @@
 """
 This is a set of utility functions to support the gender swap tool.
 
-Copyright Eva Schiffer 2013
+Copyright Eva Schiffer 2013 - 2014
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -22,17 +22,18 @@ import os
 import re
 import sys
 
-EXPECTED_FEMALE_WORDS = set(["she", "her", "hers", "herself"])
-EXPECTED_MALE_WORDS   = set(["he",  "him", "his",  "himself"])
+from constants import *
 
-def process_one_file (file_path, output_path, gender_defs,
+def process_one_file (file_path, output_path,
+                      gender_defs, gender_ordering,
                       process_file_names=False) :
     """
     It is assumed that the inputs have been validated for
     existance and minimal suitability of type.
+    
     This method can only process .txt and .rtf files.
     There are some known issues with formating tags around the
-    syntax in .rtf files, especially where rich formatting
+    syntax in .rtf files, especially where rich text formatting
     spans the syntax.
     """
     
@@ -42,16 +43,16 @@ def process_one_file (file_path, output_path, gender_defs,
     print ("Opening sheet to set genders: " + file_path)
     input_sheet_file = open(file_path, "r")
     
-    # parse the input sheet to set the genders
+    # parse the rest of the input sheet to set the genders
     input_lines   = input_sheet_file.readlines()
     in_text_temp  = ""
     # build this into one string
     for in_line in input_lines :
         in_text_temp = in_text_temp + in_line
-    gendered_text = parse_ungendered_sheet(in_text_temp, gender_defs)
+    gendered_text = parse_ungendered_sheet(in_text_temp, gender_defs, gender_ordering)
     
     # figure out the path of the new sheet in the output directory
-    output_sheet_name = parse_file_name (file_name, gender_defs) if process_file_names else file_name
+    output_sheet_name = parse_file_name (file_name, gender_defs, gender_ordering) if process_file_names else file_name
     out_sheet_path    = os.path.join(output_path, output_sheet_name)
     
     # save the resulting gendered character in the output file
@@ -65,7 +66,7 @@ def process_one_file (file_path, output_path, gender_defs,
     
     print ("Finished saving and closing new sheet.")
 
-def parse_file_name (fileName, genderDefinitions) :
+def parse_file_name (fileName, genderDefinitions, genderOrdering) :
     """
     given a file name and a set of genderDefinitions (as created
     by parse_genderlist_file), if possible create a gendered
@@ -73,8 +74,12 @@ def parse_file_name (fileName, genderDefinitions) :
     
     File names are expected to be in the form:
     
-            ##.female text.male text.whatever text you like.rtf
+            ##.gendered text a.gendered text b.whatever text you like.rtf
             (.txt files are also ok)
+    
+    Where the number of gendered text entries is the same as the possible
+    genders listed in the first line of the sheet and they are arranged
+    in the same order.
     
     If the file name doesn't appear to follow the pattern
     (there are too many or too few sections separated by '.',
@@ -88,7 +93,6 @@ def parse_file_name (fileName, genderDefinitions) :
     
     # break the name into sections delineated by .
     nameSections = fileName.split('.')
-    #print("nameSections: " + str(nameSections))
     
     # check to see if the name matches the general pattern we expect
     
@@ -97,6 +101,10 @@ def parse_file_name (fileName, genderDefinitions) :
     if not(charNumber.isdigit() and int(charNumber) in genderDefinitions) :
         print ("Unable to gender file name due to missing or invalid character number.")
         return nameToReturn
+    charNumber = int(charNumber)
+    
+    # now pull the ordering information for this character
+    tempOrdering = genderOrdering[charNumber]
     
     # if the file extention isn't txt or rtf, stop
     fileExtension = nameSections[-1]
@@ -104,43 +112,97 @@ def parse_file_name (fileName, genderDefinitions) :
         print ("Unable to gender file name due to invalid file extension.")
         return nameToReturn
     
-    # if we don't have at least 4 sections (character number.female text.male text.file extension), stop
-    if len(nameSections) < 4 :
+    # check how many gendered sections we're expecting
+    numGenderOptions = len(tempOrdering.keys())
+    
+    # if we don't have at least (the number expected genders + 2) sections (character number.<gendered sections>.file extension), stop
+    if len(nameSections) < (numGenderOptions + 2) :
         print ("Unable to gender file name due to formatting inconsistency, " +
                "expected more sections delimited by periods.")
         return nameToReturn
     
     # select the gender specific part of the name
-    charNumber = int(charNumber)
-    shouldUseFemale = genderDefinitions[charNumber][1]
-    nameToReturn = nameSections[0] + '.' + nameSections[1] if shouldUseFemale else nameSections[0] + '.' + nameSections[2]
+    genderIndex  = get_gender_index(genderDefinitions[charNumber], tempOrdering)
+    nameToReturn = nameSections[0] + "." + nameSections[genderIndex + 1]
     
     # add the rest of the file name back onto our gendered section
-    for index in range(3, len(nameSections)) :
+    for index in range(numGenderOptions + 1, len(nameSections)) :
         nameToReturn = nameToReturn + '.' + nameSections[index]
     
     print ("Successfully gendered file name, resulting in: " + nameToReturn)
     
     return nameToReturn
 
+def get_gender_index (genderDefinition, genderOrdering) :
+    """
+    given a gender definition for the character and the gender ordering
+    for the character determine the appropriate index to use for that gender
+    """
+    
+    found       = False
+    genderToUse = genderDefinition[1]
+    indexToUse  = -1
+    
+    for index in sorted(genderOrdering.keys()) :
+        if genderOrdering[index] == genderToUse :
+            indexToUse = index
+            found      = True
+    
+    if indexToUse < 0 :
+        print("WARNING: Unable to find selected gender for character " + genderDefinition[0]
+              + " in list of possible genders for this character.")
+    
+    return indexToUse
+
 def parse_genderlist_file (genderData) :
     """
     takes the text lines of a gender list and returns a dictionary in the form:
     
         {
-            character number (int):   ["character name", isFemale (bool)],
+            character number (int):   ["character name", pronoun_set_constant],
         }
+    
+    FUTURE: When the pronoun sets are externally configurable detecting which
+    gender was selected will need to be handled differently.
     """
     
-    genderDict = { }
+    genderDict  = { }
+    genderOrder = { }
     
+    # parse the information for each line since the file should be one char per line
     for line in genderData :
         
-        [name, number, genderText] = line.split(": ")
-        name       = name.strip()
-        number     = int(number.strip())
-        genderText = genderText.strip().lower()
-        isFemale   = (genderText == "female") or (genderText[0] == "f")
+        # split the line and handle the easy stuff
+        [name, number, gendersList, genderText] = line.split(":")
+        name        = name.strip()
+        number      = int(number.strip())
+        
+        # parse the list of possible genders for this characer into useful ordering info
+        gendersList   = gendersList.split('/')
+        temp_ordering = { }
+        for index in range(len(gendersList)) :
+            temp_ordering[index] = gendersList[index].strip() # strip off whitespace
+            # check to see if this is a set we know about
+            temp_found = False
+            for gender_key in POSSIBLE_PRONOUN_SETS.keys() :
+                if temp_ordering[index] == gender_key :
+                    temp_found = True
+            if temp_found is False :
+                print("Unable to find defined gender (" + temp_ordering[index]
+                      + ") in list of genders understood by this program: " + str(POSSIBLE_PRONOUN_SETS.keys()))
+                print("Sheet processing may be incomplete or yield unexpected results.")
+        # add this characters ordering info to our overall ordering info
+        genderOrder[number] = temp_ordering
+        
+        # figure out the gender selected for this character
+        genderText  = genderText.strip().lower()
+        genderConst = None
+        genderConst = FEMALE_GENDER       if (genderText == "female") or (genderText[0] == "f") else genderConst
+        genderConst = MALE_GENDER         if (genderText == "male")   or (genderText[0] == "m") else genderConst
+        genderConst = NEUTRAL_THEY_GENDER if genderText.find("they") >= 0                       else genderConst
+        genderConst = NEUTRAL_ZE_GENDER   if genderText.find("ze")   >= 0                       else genderConst
+        if genderConst is None :
+            print "Unable to parse selected gender for character as a gender understood by this program."
         
         # warn if data is being overwritten
         if number in genderDict :
@@ -148,20 +210,19 @@ def parse_genderlist_file (genderData) :
                    + " is present multiple times in this list of gender data. "
                    + "Only the last entry for this number will be used.")
         
-        genderDict[number] = [name, isFemale]
-        #print "name:      " + name
-        #print "number:    " + str(number)
-        #print "is female: " + str(isFemale)
+        # set the gender information for this character in our dictionary
+        genderDict[number] = [name, genderConst]
     
-    return genderDict
+    return genderDict, genderOrder
 
-def parse_ungendered_sheet (inputText, genderDefinitions) :
+def parse_ungendered_sheet (inputText, genderDefinitions, genderOrdering) :
     """
-    takes a character sheet in the form of a string and
-    a gender definition dictionary (in the form returned from
-    parse_genderlist_file) and parses the character sheet to
-    specify the genders of all the characters as defined in
-    the dictionary.
+    takes a character sheet in the form of a string,
+    a gender definition dictionary, and a gender ordering for this character
+    (the last two are in the form returned from parse_genderlist_file)
+    
+    then parses the character sheet to specify the genders of all the
+    characters as defined in the dictionary.
     
     Returns the gender-specific version of the character sheet
     text as an array of strings (in a form similar to the
@@ -169,32 +230,58 @@ def parse_ungendered_sheet (inputText, genderDefinitions) :
     """
     
     # gendered word markup looks like: [02: her/his]
-    genderedWordPattern = r"\[(\d+):\s*([^/]*)/([^\]]*)]"
+    #genderedWordPattern = r"\[(\d+):\s*([^/]*)/([^\]]*)]"
+    genderedWordPattern = r"\[(\d+):\s*([^\]]*)]"
     
-    def cleanup_gender_fn (matchInfo, genderDefs=genderDefinitions, printWarnings=True) :
+    def cleanup_gender_fn (matchInfo,
+                           genderDefs=genderDefinitions,
+                           genderOrder=genderOrdering,
+                           printWarnings=True) :
         """
         this function will be used when calling re.sub to replace
         each match with the appropriate gendered text
         """
         
-        toReturn = ""
+        toReturn           = ""
+        characterNumber    = int(matchInfo.group(1)) #guaranteed to be digits
+        genderedOptions    = matchInfo.group(2).split('/')
         
-        characterNumber = int(matchInfo.group(1)) #guaranteed to be digits
+        # if there's a "[" in the gendered text, something's gone wrong
+        if printWarnings and (matchInfo.group(2).find("[") >= 0) :
+            print("Unexpected [ character found inside phrase: " + matchInfo.group(0))
+            print("This may indicate a serious mark up text formatting error.")
+        
         if characterNumber in genderDefs.keys() :
             
-            shouldUseFemale = genderDefs[characterNumber][1]
-            femaleTerm      = matchInfo.group(2).strip()
-            maleTerm        = matchInfo.group(3).strip()
-            toReturn        = femaleTerm if shouldUseFemale else maleTerm
+            # check if we have the number of genered text options we expect
+            # based on the genders this character could be
+            expectedNumOptions = genderOrder[characterNumber].keys()
+            if (len(genderedOptions) != len(expectedNumOptions)) and printWarnings :
+                print("The gendered phrase (" + matchInfo.group(0) + ") does not have the expected "
+                      + "number of possible gender options for this character (" + str(len(expectedNumOptions)) + ").")
+                print("Parsing for this phrase may not be accurate.")
             
+            # get the index we want based on the character's gender
+            tempIndex = get_gender_index (genderDefs[characterNumber], genderOrder[characterNumber])
+            
+            # pull the gendered term
+            toReturn = genderedOptions[tempIndex].strip()
+            
+            # if we're printing warnings, check the appropriateness of the various terms
             if printWarnings :
-                check_gendered_terms(femaleTerm, maleTerm, matchInfo.group(0))
+                
+                for index in range(len(genderedOptions)) :
+                    term = genderedOptions[index].strip()
+                    if index in genderOrder[characterNumber].keys() :
+                        expectedGender = genderOrder[characterNumber][index].strip()
+                        check_gendered_term (term, expectedGender, matchInfo.group(0))
             
         else :
             
             toReturn = matchInfo.group(0)
-            print ("Warning, unable to find character number " + str(characterNumber)
-                   + " in character list. The following phrase will not be processed: " + toReturn)
+            if printWarnings :
+                print ("Warning, unable to find character number " + str(characterNumber)
+                       + " in character list. The following phrase will not be processed: " + toReturn)
         
         return toReturn
     
@@ -202,25 +289,21 @@ def parse_ungendered_sheet (inputText, genderDefinitions) :
     
     return outputText
 
-def check_gendered_terms (femaleTerm, maleTerm, fullPhraseForPrinting=None) :
+def check_gendered_term (term, expectedGender, fullPhraseForPrinting=None) :
     """
-    check the gendered terms given and print a warning if they
-    would be expected to be gendered terms for the opposite gender
+    check the gendered term given and print a warning
+    if it does not match the expected gender
     """
     
-    if femaleTerm in EXPECTED_MALE_WORDS :
-        message = "WARNING: "
-        message = (message + "In the phrase \"" + fullPhraseForPrinting + "\", t") if (fullPhraseForPrinting is not None) else (message + "T")
-        message = message +"he term \"" + femaleTerm + "\" was given as a female term but is" + \
-               " more commonly considered male. You may wish to check if this is a typo."
-        print (message)
-    
-    if maleTerm in EXPECTED_FEMALE_WORDS :
-        message = "WARNING: "
-        message = (message + "In the phrase \"" + fullPhraseForPrinting + "\", t") if (fullPhraseForPrinting is not None) else (message + "T")
-        message = message +"he term \"" + maleTerm + "\" was given as a male term but is" + \
-               " more commonly considered female. You may wish to check if this is a typo."
-        print (message)
+    for gender_key in sorted(POSSIBLE_PRONOUN_SETS.keys()) :
+        
+        if (gender_key != expectedGender) and (term in POSSIBLE_PRONOUN_SETS[gender_key]) :
+            
+            message = "WARNING: "
+            message = (message + "In the phrase \"" + fullPhraseForPrinting + "\", t") if (fullPhraseForPrinting is not None) else (message + "T")
+            message = (message +"he term \"" + term + "\" was given as a " + expectedGender + " term but is" + 
+                       " more commonly considered " + gender_key + ". You may wish to check if this is a typo.")
+            print (message)
 
 if __name__ == "__main__":
     main()

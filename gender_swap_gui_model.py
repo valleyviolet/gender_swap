@@ -2,7 +2,7 @@
 """
 This module includes the model behind the gender swap's gui code.
 
-Copyright Eva Schiffer 2013
+Copyright Eva Schiffer 2013 - 2014
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@ class GenderSwapGUIModel :
         
         self.loaded_list_path      = None
         self.gender_defs           = None
+        self.gender_orders         = None
         self.were_genders_edited   = False
         
         self.output_path           = None
@@ -52,6 +53,7 @@ class GenderSwapGUIModel :
         
         self.gui_for_updates.recieveUpdate ( genderListFilePath=self.loaded_list_path,
                                              genderDefinitions=self.gender_defs,
+                                             genderOrdering=self.gender_orders,
                                              outputPath=self.output_path,
                                              filesToProcessList=list(self.files_to_process_list),
                                              doProcessFileNames=self.do_process_file_names)
@@ -69,11 +71,12 @@ class GenderSwapGUIModel :
             # open the file and set our internal gender data accordingly
             genderFile = open(file_path, 'r')
             self.loaded_list_path = file_path
-            self.gender_defs      = swap_util.parse_genderlist_file(genderFile.readlines())
+            self.gender_defs, self.gender_orders = swap_util.parse_genderlist_file(genderFile.readlines())
             
             # let the view know that the gender information changed
             self.gui_for_updates.recieveUpdate ( genderListFilePath=self.loaded_list_path,
-                                                 genderDefinitions=self.gender_defs, )
+                                                 genderDefinitions=self.gender_defs,
+                                                 genderOrdering=self.gender_orders,)
             
         else :
             print ("Unable to open file path: " + str(file_path))
@@ -192,6 +195,11 @@ class GenderSwapGUIModel :
             print ("No gender definitions are loaded.")
             return
         
+        # check if we have gender orderings loaded
+        if (self.gender_orders is None) or (len(self.gender_orders.keys()) <= 0) :
+            print ("No gender orderings are loaded.")
+            return
+        
         # check if we have an output directory set at all
         if self.output_path is None :
             print ("No output directory is selected.")
@@ -211,6 +219,7 @@ class GenderSwapGUIModel :
             swap_util.process_one_file(file_path,
                                        str(self.output_path),
                                        self.gender_defs,
+                                       self.gender_orders,
                                        process_file_names=self.do_process_file_names)
 
 
