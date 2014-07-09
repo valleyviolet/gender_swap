@@ -168,6 +168,33 @@ class GenderSwapGUIModel :
         
         self.gui_for_updates.recieveUpdate ( filesToProcessList=list(self.files_to_process_list))
     
+    def preview_file (self, file_path) :
+        """
+        Create a preview version of the file using the current gender definitions.
+        """
+        
+        # check the minimum prerequisites for file processing
+        if self.check_processing_prereqs() is None:
+            return
+        
+        """ TODO I have no idea why this comparison doesn't work
+        # check that we have a selected file
+        found = False
+        for temp_path in list(self.files_to_process_list) :
+            print (str(str(found) == str(temp_path)))
+            if str(found) == str(temp_path) :
+                found = True
+        if not found :
+            print ("Unrecognized file path given for preview: " + str(file_path))
+            return
+        """
+        
+        # at this point we've minimally validated that we can process the file
+        return swap_util.open_and_gender_sheet (file_path, 
+                                                self.gender_defs,
+                                                self.gender_orders,
+                                                reason=" to create gendered preview")
+    
     def process_files (self) :
         """
         if possible given the current state of the model, process the files
@@ -185,19 +212,13 @@ class GenderSwapGUIModel :
         an exception for the gui to handle.
         """
         
+        # check the minimum prerequisites for file processing
+        if self.check_processing_prereqs() is None:
+            return
+        
         # check that we have files to process
         if len(self.files_to_process_list) <= 0 :
             print ("No files to process.")
-            return
-        
-        # check if we have gender defintions loaded
-        if (self.gender_defs is None) or (len(self.gender_defs.keys()) <= 0) :
-            print ("No gender definitions are loaded.")
-            return
-        
-        # check if we have gender orderings loaded
-        if (self.gender_orders is None) or (len(self.gender_orders.keys()) <= 0) :
-            print ("No gender orderings are loaded.")
             return
         
         # check if we have an output directory set at all
@@ -221,6 +242,27 @@ class GenderSwapGUIModel :
                                        self.gender_defs,
                                        self.gender_orders,
                                        process_file_names=self.do_process_file_names)
+    
+    def check_processing_prereqs (self) :
+        """
+        Check that we have the minimum information needed to process files.
+        
+        FUTURE, this method handles errors with printing and returning None, move to throwing
+        an exception for the gui to handle.
+        """
+        
+        # check if we have gender defintions loaded
+        if (self.gender_defs is None) or (len(self.gender_defs.keys()) <= 0) :
+            print ("No gender definitions are loaded.")
+            return None
+        
+        # check if we have gender orderings loaded
+        if (self.gender_orders is None) or (len(self.gender_orders.keys()) <= 0) :
+            print ("No gender orderings are loaded.")
+            return None
+        
+        return 1
+
 
 
 def main () :

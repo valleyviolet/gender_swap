@@ -62,6 +62,9 @@ class GenderedGUI (QtGui.QWidget) :
         self.setWindowTitle('Gender Swap GUI')
         self.setWindowIcon(QtGui.QIcon('./art_assets/changeIcon.png'))  
         self.show()
+        
+        # TODO, this is a bad leaky strategy, fix it later
+        #self.windows = [ ]
     
     def buildDefinitionsTabLayout (self) :
         """
@@ -155,6 +158,12 @@ class GenderedGUI (QtGui.QWidget) :
         self.processNamesToggle.clicked.connect(self.process_names_toggled)
         rowNum += 1
         
+        """
+        self.previewButton = QtGui.QPushButton("Preview Sheet")
+        self.previewButton.clicked.connect(self.preview_pressed)
+        layout.addWidget(self.previewButton, rowNum, 0, 1, 2)
+        """
+        
         self.processButton = QtGui.QPushButton("Process")
         self.processButton.clicked.connect(self.process_pressed)
         layout.addWidget(self.processButton, rowNum, 2, 1, 2)
@@ -228,6 +237,39 @@ class GenderedGUI (QtGui.QWidget) :
         print ("User pressed clear button.")
         
         self.model.clear_files_to_process()
+    
+    def preview_pressed (self) :
+        """
+        the user pressed the button to preview one of the files
+        """
+        
+        """
+        print ("User pressed preview button.")
+        
+        # get the currently selected file
+        file_text = str(self.filesToProcessDisplay.currentItem().text()) if self.filesToProcessDisplay.currentItem() is not None else None
+        
+        # get the gendered version of the file's contents for the preview
+        gendered_text = self.model.preview_file(file_text)
+        
+        print ("successfully gendered preview text")
+        
+        temp_window = QtGui.QWidget()
+        temp_layout = QtGui.QGridLayout()
+        
+        temp_text_edit = QtGui.QLabel()
+        temp_text_edit.textFormat = QtCore.Qt.RichText
+        temp_text_edit.setText(gendered_text)
+        
+        temp_layout.addWidget(temp_text_edit, 0, 0)
+        temp_window.setLayout(temp_layout)
+        
+        temp_window.resize(500, 500)
+        temp_window.setWindowTitle('Preview of: ' + file_text)
+        temp_window.show()
+        
+        self.windows.append(temp_window)
+        """
     
     def process_pressed (self) :
         """

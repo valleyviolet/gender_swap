@@ -32,15 +32,43 @@ def process_one_file (file_path, output_path,
     existance and minimal suitability of type.
     
     This method can only process .txt and .rtf files.
+    
     There are some known issues with formating tags around the
     syntax in .rtf files, especially where rich text formatting
     spans the syntax.
     """
     
+    # get the text from the file and gender it
+    gendered_text = open_and_gender_sheet(file_path,
+                                          gender_defs, gender_ordering,
+                                          reason=" to set genders")
+    
+    # figure out the path of the new sheet in the output directory
     file_name = os.path.basename(file_path)
+    output_sheet_name = parse_file_name (file_name, gender_defs, gender_ordering) if process_file_names else file_name
+    out_sheet_path    = os.path.join(output_path, output_sheet_name)
+    
+    # save the resulting gendered character in the output file
+    print ("Saving gendered character sheet to: " + out_sheet_path)
+    out_sheet_file    = open(out_sheet_path, "w")
+    out_sheet_file.write(gendered_text)
+    
+    # close the file we opened since we're done with it
+    input_sheet_file.close()
+    out_sheet_file.close()
+    
+    print ("Finished saving and closing new sheet.")
+
+def open_and_gender_sheet (file_path, 
+                           gender_defs, gender_ordering,
+                           reason="") :
+    """
+    Open a sheet, read in the text, and create a gendered version
+    based on the gender_defs and gender_ordering given.
+    """
     
     # open the input sheet
-    print ("Opening sheet to set genders: " + file_path)
+    print ("Opening sheet" + reason + ": " + file_path)
     input_sheet_file = open(file_path, "r")
     
     # parse the rest of the input sheet to set the genders
@@ -51,20 +79,10 @@ def process_one_file (file_path, output_path,
         in_text_temp = in_text_temp + in_line
     gendered_text = parse_ungendered_sheet(in_text_temp, gender_defs, gender_ordering)
     
-    # figure out the path of the new sheet in the output directory
-    output_sheet_name = parse_file_name (file_name, gender_defs, gender_ordering) if process_file_names else file_name
-    out_sheet_path    = os.path.join(output_path, output_sheet_name)
-    
-    # save the resulting gendered character in the output file
-    print ("Saving gendered character sheet to: " + out_sheet_path)
-    out_sheet_file    = open(out_sheet_path, "w")
-    out_sheet_file.write(gendered_text)
-    
-    # close the files we've opened since we're done with them
+    # close the file we opened since we're done with it
     input_sheet_file.close()
-    out_sheet_file.close()
     
-    print ("Finished saving and closing new sheet.")
+    return gendered_text
 
 def parse_file_name (fileName, genderDefinitions, genderOrdering) :
     """
