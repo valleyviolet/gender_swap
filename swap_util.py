@@ -54,7 +54,6 @@ def process_one_file (file_path, output_path,
     out_sheet_file.write(gendered_text)
     
     # close the file we opened since we're done with it
-    input_sheet_file.close()
     out_sheet_file.close()
     
     print ("Finished saving and closing new sheet.")
