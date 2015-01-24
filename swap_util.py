@@ -247,8 +247,8 @@ def parse_ungendered_sheet (inputText, genderDefinitions, genderOrdering) :
     """
     
     # gendered word markup looks like: [02: her/his]
-    #genderedWordPattern = r"\[(\d+):\s*([^/]*)/([^\]]*)]"
-    genderedWordPattern = r"\[(\d+):\s*([^\]]*)]"
+    #genderedWordPattern = r"\[(\d+):\s*([^\]]*)]"
+    genderedWordPattern = r"\[([\d\s]+):\s*([^\]]*)]"
     
     def cleanup_gender_fn (matchInfo,
                            genderDefs=genderDefinitions,
@@ -260,8 +260,16 @@ def parse_ungendered_sheet (inputText, genderDefinitions, genderOrdering) :
         """
         
         toReturn           = ""
-        characterNumber    = int(matchInfo.group(1)) #guaranteed to be digits
+        characterNumber    = matchInfo.group(1)
         genderedOptions    = matchInfo.group(2).split('/')
+        
+        # double check that our characterNumber is a number
+        characterNumber    = "".join(characterNumber.split())
+        if characterNumber == "" :
+            print ("Unable to extract character number from text: " + matchInfo.group(1))
+            characterNumber = -1
+        else :
+            characterNumber = int(characterNumber)
         
         # if there's a "[" in the gendered text, something's gone wrong
         if printWarnings and (matchInfo.group(2).find("[") >= 0) :
