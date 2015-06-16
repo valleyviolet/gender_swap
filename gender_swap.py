@@ -4,7 +4,7 @@ The purpose of this program is to gender swap LARP character sheets.
 The sheets are expected to be in .txt or .rtf formats and a gendersList.txt
 file defining the genders to select is expected.
 
-Copyright Eva Schiffer 2012 - 2014
+Copyright Eva Schiffer 2012 - 2015
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

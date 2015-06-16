@@ -2,7 +2,7 @@
 """
 This module includes the model behind the gender swap's gui code.
 
-Copyright Eva Schiffer 2013 - 2014
+Copyright Eva Schiffer 2013 - 2015
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@ import sys
 import os
 
 import swap_util
+from constants import *
 
 class GenderSwapGUIModel :
     """
@@ -148,14 +149,14 @@ class GenderSwapGUIModel :
             
             # look at the file extension to see if it's one we can process
             _, file_type = os.path.splitext(file_path)
-            if (file_type == ".txt" or file_type == ".rtf") : # FUTURE make these constants
+            if (file_type in POSSIBLE_FILE_TYPES) :
                 self.files_to_process_list.update([file_path])
                 
                 print ("Path is of an acceptable type. Adding to it to processing list.")
                 
             else :
                 
-                print ("File is not of .txt or .rtf type. Ignoring file.")
+                print ("File is not a type this program understands. Ignoring file.")
         
         self.gui_for_updates.recieveUpdate ( filesToProcessList=list(self.files_to_process_list))
     

@@ -2,7 +2,7 @@
 """
 This is a set of string constants to support the gender swap tool.
 
-Copyright Eva Schiffer 2014
+Copyright Eva Schiffer 2015
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -27,14 +27,14 @@ NEUTRAL_THEY_GENDER   = "neutral they"
 NEUTRAL_ZE_GENDER     = "neutral ze"
 
 # the expected pronoun sets for the genders this program understands
-EXPECTED_FEMALE_WORDS = set(["she",  "her",  "hers",            "herself"])
-EXPECTED_MALE_WORDS   = set(["he",   "him",  "his",             "himself"])
-EXPECTED_N_THEY_WORDS = set(["they", "them", "their", "theirs", "themself"])
-EXPECTED_N_ZE_WORDS   = set(["ze", "zhe",
-                             "zir", "zem" "hir", "mer", "zhim",
-                             "zir", "zes", "hir", "zer", "zher",
-                             "zirs", "zes", "hirs", "zers", "zhers",
-                             "zirself", "hirself", "zemself", "zhimself"])
+EXPECTED_FEMALE_WORDS = {"she",  "her",  "hers",            "herself"}
+EXPECTED_MALE_WORDS   = {"he",   "him",  "his",             "himself"}
+EXPECTED_N_THEY_WORDS = {"they", "them", "their", "theirs", "themself"}
+EXPECTED_N_ZE_WORDS   = {"ze", "zhe",
+                         "zir", "zem" "hir", "mer", "zhim",
+                         "zir", "zes", "hir", "zer", "zher",
+                         "zirs", "zes", "hirs", "zers", "zhers",
+                         "zirself", "hirself", "zemself", "zhimself"}
 
 # a correlation of classifications to expected pronouns this program understands
 POSSIBLE_PRONOUN_SETS = {
@@ -44,3 +44,4 @@ POSSIBLE_PRONOUN_SETS = {
                             NEUTRAL_ZE_GENDER   : EXPECTED_N_ZE_WORDS,
                         }
 
+POSSIBLE_FILE_TYPES = [".txt", ".html", ".pdf"]

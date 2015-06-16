@@ -2,7 +2,7 @@
 """
 This module includes gui code for presenting the gender swap utility.
 
-Copyright Eva Schiffer 2013 - 2014
+Copyright Eva Schiffer 2013 - 2015
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -78,7 +78,7 @@ class GenderedGUI (QtGui.QWidget) :
         self.genderListDisplayTable
         """
         
-        layout = QtGui.QGridLayout()
+        layoutObj = QtGui.QGridLayout()
         rowNum = 1
         
         # note: addWidget has parameters in the form:
@@ -87,23 +87,23 @@ class GenderedGUI (QtGui.QWidget) :
         
         self.genderListFilePathDisplay = QtGui.QLineEdit()
         self.genderListFilePathDisplay.setEnabled(False)
-        layout.addWidget(self.genderListFilePathDisplay, rowNum, 0, 1, 4)
+        layoutObj.addWidget(self.genderListFilePathDisplay, rowNum, 0, 1, 4)
         self.loadGenderListButton = QtGui.QPushButton("Load Gender List")
         self.loadGenderListButton.clicked.connect(self.loadGenderList)
-        layout.addWidget(self.loadGenderListButton, rowNum, 4)
+        layoutObj.addWidget(self.loadGenderListButton, rowNum, 4)
         rowNum += 1
         
-        #layout.addWidget(QtGui.QLabel('Character Gender Table'), rowNum, 0)
+        #layoutObj.addWidget(QtGui.QLabel('Character Gender Table'), rowNum, 0)
         #rowNum += 1
         
         self.genderListDisplayTable = QtGui.QTableWidget(0, 3)
         self.genderListDisplayTable.setHorizontalHeaderLabels(QtCore.QStringList(["Name", "Number", "Gender"]))
         self.genderListDisplayTable.horizontalHeader().setResizeMode(QtGui.QHeaderView.Stretch)
         self.genderListDisplayTable.verticalHeader().hide()
-        layout.addWidget(self.genderListDisplayTable, rowNum, 0, 8, 5)
+        layoutObj.addWidget(self.genderListDisplayTable, rowNum, 0, 8, 5)
         rowNum += 1
         
-        return layout
+        return layoutObj
     
     def buildFilesTabLayout (self) :
         """
@@ -122,53 +122,53 @@ class GenderedGUI (QtGui.QWidget) :
         self.processButton
         """
         
-        layout = QtGui.QGridLayout()
+        layoutObj = QtGui.QGridLayout()
         rowNum = 1
         
         # note: addWidget has parameters in the form:
         # (widget_to_add, row_index, col_index, row_span, col_span)
         # if the spans are omitted they default to 1
         
-        layout.addWidget(QtGui.QLabel('Output to: '), rowNum, 0)
+        layoutObj.addWidget(QtGui.QLabel('Output to: '), rowNum, 0)
         self.outputFilePathDisplay = QtGui.QLineEdit()
         self.outputFilePathDisplay.setEnabled(False)
-        layout.addWidget(self.outputFilePathDisplay, rowNum, 1, 1, 2)
+        layoutObj.addWidget(self.outputFilePathDisplay, rowNum, 1, 1, 2)
         self.selectOutputButton = QtGui.QPushButton("Select")
         self.selectOutputButton.clicked.connect(self.selectOutputDir)
-        layout.addWidget(self.selectOutputButton, rowNum, 3)
+        layoutObj.addWidget(self.selectOutputButton, rowNum, 3)
         rowNum += 1
         
         self.searchDirsToggle = QtGui.QCheckBox("load from directory")
-        layout.addWidget(self.searchDirsToggle, rowNum, 0, 1, 3)
+        layoutObj.addWidget(self.searchDirsToggle, rowNum, 0, 1, 3)
         self.loadFilesButton = QtGui.QPushButton("Load Files")
         self.loadFilesButton.clicked.connect(self.load_files_to_process)
-        layout.addWidget(self.loadFilesButton, rowNum, 2)
+        layoutObj.addWidget(self.loadFilesButton, rowNum, 2)
         self.clearFilesButton = QtGui.QPushButton("Clear")
         self.clearFilesButton.clicked.connect(self.clear_pressed)
-        layout.addWidget(self.clearFilesButton, rowNum, 3)
+        layoutObj.addWidget(self.clearFilesButton, rowNum, 3)
         rowNum += 1
         
         #self.filesToProcessDisplay = QtGui.QListWidget()
         self.filesToProcessDisplay = FilesList()
-        layout.addWidget(self.filesToProcessDisplay, rowNum, 0, 5, 4)
+        layoutObj.addWidget(self.filesToProcessDisplay, rowNum, 0, 5, 4)
         rowNum += 5
         
         self.processNamesToggle = QtGui.QCheckBox(" also process file names to gender them")
-        layout.addWidget(self.processNamesToggle, rowNum, 0, 1, 4)
+        layoutObj.addWidget(self.processNamesToggle, rowNum, 0, 1, 4)
         self.processNamesToggle.clicked.connect(self.process_names_toggled)
         rowNum += 1
         
         """
         self.previewButton = QtGui.QPushButton("Preview Sheet")
         self.previewButton.clicked.connect(self.preview_pressed)
-        layout.addWidget(self.previewButton, rowNum, 0, 1, 2)
+        layoutObj.addWidget(self.previewButton, rowNum, 0, 1, 2)
         """
         
         self.processButton = QtGui.QPushButton("Process")
         self.processButton.clicked.connect(self.process_pressed)
-        layout.addWidget(self.processButton, rowNum, 2, 1, 2)
+        layoutObj.addWidget(self.processButton, rowNum, 2, 1, 2)
         
-        return layout
+        return layoutObj
     
     def setModel (self, modelObject) :
         """

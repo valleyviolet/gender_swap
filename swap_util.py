@@ -2,7 +2,7 @@
 """
 This is a set of utility functions to support the gender swap tool.
 
-Copyright Eva Schiffer 2013 - 2014
+Copyright Eva Schiffer 2013 - 2015
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
 import re
-import sys
 
 from constants import *
 
@@ -29,11 +28,11 @@ def process_one_file (file_path, output_path,
                       process_file_names=False) :
     """
     It is assumed that the inputs have been validated for
-    existance and minimal suitability of type.
+    existence and minimal suitability of type.
     
     This method can only process .txt and .rtf files.
     
-    There are some known issues with formating tags around the
+    There are some known issues with formatting tags around the
     syntax in .rtf files, especially where rich text formatting
     spans the syntax.
     """
@@ -47,12 +46,20 @@ def process_one_file (file_path, output_path,
     file_name = os.path.basename(file_path)
     output_sheet_name = parse_file_name (file_name, gender_defs, gender_ordering) if process_file_names else file_name
     out_sheet_path    = os.path.join(output_path, output_sheet_name)
-    
+
+    temp_gendered_text = gendered_text
+    """
+    # if we're handling PDFs, recompress the text
+    if output_sheet_name.endswith('pdf') :
+        import zlib
+        temp_gendered_text = zlib.compress(gendered_text)
+    """
+
     # save the resulting gendered character in the output file
     print ("Saving gendered character sheet to: " + out_sheet_path)
     out_sheet_file    = open(out_sheet_path, "w")
-    out_sheet_file.write(gendered_text)
-    
+    out_sheet_file.write(temp_gendered_text)
+
     # close the file we opened since we're done with it
     out_sheet_file.close()
     
@@ -65,17 +72,26 @@ def open_and_gender_sheet (file_path,
     Open a sheet, read in the text, and create a gendered version
     based on the gender_defs and gender_ordering given.
     """
-    
+
     # open the input sheet
     print ("Opening sheet" + reason + ": " + file_path)
     input_sheet_file = open(file_path, "r")
-    
+
     # parse the rest of the input sheet to set the genders
     input_lines   = input_sheet_file.readlines()
     in_text_temp  = ""
     # build this into one string
     for in_line in input_lines :
         in_text_temp = in_text_temp + in_line
+
+    """
+    # if this is a pdf, uncompress the contents
+    if file_path.endswith('pdf') :
+        import zlib
+        in_text_temp = zlib.decompress(in_text_temp)
+    """
+
+    # parse the sheet to specify the genders
     gendered_text = parse_ungendered_sheet(in_text_temp, gender_defs, gender_ordering)
     
     # close the file we opened since we're done with it
@@ -330,5 +346,3 @@ def check_gendered_term (term, expectedGender, fullPhraseForPrinting=None) :
                        " more commonly considered " + gender_key + ". You may wish to check if this is a typo.")
             print (message)
 
-if __name__ == "__main__":
-    main()
