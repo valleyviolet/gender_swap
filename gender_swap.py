@@ -21,8 +21,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import os
-import re
-import sys
 
 from optparse import OptionParser
 
@@ -169,7 +167,8 @@ python -m gender_swap gui
     commands.update(dict(x for x in locals().items() if x[0] not in prior))    
     
     # if what the user asked for is not one of our existing functions, print the help
-    if (not args) or (args[0] not in commands): 
+    if (not args) or (args[0] not in commands):
+        #gui() # TEMP I don't like hardcoding this for application making
         parser.print_help()
         help()
         return 1

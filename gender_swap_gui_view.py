@@ -19,7 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import sys
-import os
 
 from PyQt4 import QtGui, QtCore
 
@@ -60,7 +59,7 @@ class GenderedGUI (QtGui.QWidget) :
         
         self.resize(500, 500)
         self.setWindowTitle('Gender Swap GUI')
-        self.setWindowIcon(QtGui.QIcon('./art_assets/changeIcon.png'))  
+        self.setWindowIcon(QtGui.QIcon('./changeIcon.png'))  # TODO, the relative path won't work when packaged
         self.show()
         
         # TODO, this is a bad leaky strategy, fix it later

@@ -171,15 +171,13 @@ def get_gender_index (genderDefinition, genderOrdering) :
     given a gender definition for the character and the gender ordering
     for the character determine the appropriate index to use for that gender
     """
-    
-    found       = False
+
     genderToUse = genderDefinition[1]
     indexToUse  = -1
     
     for index in sorted(genderOrdering.keys()) :
         if genderOrdering[index] == genderToUse :
             indexToUse = index
-            found      = True
     
     if indexToUse < 0 :
         print("WARNING: Unable to find selected gender for character " + genderDefinition[0]
@@ -294,7 +292,7 @@ def parse_ungendered_sheet (inputText, genderDefinitions, genderOrdering) :
         
         if characterNumber in genderDefs.keys() :
             
-            # check if we have the number of genered text options we expect
+            # check if we have the number of gendered text options we expect
             # based on the genders this character could be
             expectedNumOptions = genderOrder[characterNumber].keys()
             if (len(genderedOptions) != len(expectedNumOptions)) and printWarnings :
