@@ -27,6 +27,12 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+"""
+Note: I've moved to packaging this using PyInstaller. The build command is:
+    PyInstaller -w --onefile ./gender_swap.py
+(run in the gender_swap source directory)
+"""
+
 import sys
 import ez_setup
 ez_setup.use_setuptools()

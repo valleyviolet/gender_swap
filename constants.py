@@ -44,4 +44,4 @@ POSSIBLE_PRONOUN_SETS = {
                             NEUTRAL_ZE_GENDER   : EXPECTED_N_ZE_WORDS,
                         }
 
-POSSIBLE_FILE_TYPES = [".txt", ".html", ".pdf"]
+POSSIBLE_FILE_TYPES = [".txt", ".rtf", ".html"]

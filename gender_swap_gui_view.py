@@ -372,10 +372,10 @@ class GenderedGUI (QtGui.QWidget) :
             self.outputFilePathDisplay.setText(outputPath)
         
         # if we got a new setting for whether or not to search directories, update that
-        if searchDirectories is not None :
-            print ("Updating search directories check box: " + str(searchDirectories))
-            
-            self.searchDirsToggle.setCheckState(searchDirectories)
+        #if searchDirectories is not None :
+        #    print ("Updating search directories check box: " + str(searchDirectories))
+        #
+        #    self.searchDirsToggle.setCheckState(searchDirectories)
         
         # if we got a new list of files to process, update that
         if filesToProcessList is not None :

@@ -302,7 +302,10 @@ def parse_ungendered_sheet (inputText, genderDefinitions, genderOrdering) :
             
             # get the index we want based on the character's gender
             tempIndex = get_gender_index (genderDefs[characterNumber], genderOrder[characterNumber])
-            
+
+            #print("tempIndex: " + str(tempIndex))
+            #print("genderedOptions: " + str(genderedOptions))
+
             # pull the gendered term
             toReturn = genderedOptions[tempIndex].strip()
             
