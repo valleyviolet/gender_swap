@@ -49,14 +49,14 @@ python -m gender_swap gui
                       help="the directory where the revised character sheets will be placed")
     parser.add_option('-p', '--processFileName', dest='processName',
                       action="store_true", default=False, help="process the file name to gender it")
-    parser.add_option('-r', '--version', dest='version',
+    parser.add_option('-v', '--version', dest='version',
                       action="store_true", default=False, help="view the program version")
     
     (options, args) = parser.parse_args()
     
     # display the version
     if options.version :
-        print ("gender_swap v.0.5 \n") # because having a version history is cool
+        print ("gender_swap, version 0.5 \n") # because having a version history is cool
 
     # set up the commands dictionary
     commands = {}
@@ -65,7 +65,7 @@ python -m gender_swap gui
     
     
     def swap ( ) :
-        """ swap in specific genders for a set of documents
+        """swap in specific genders for a set of documents
         
         given information in the form of commandline options:
         
@@ -140,7 +140,7 @@ python -m gender_swap gui
         return 0
     
     def gui ( ) :
-        """ a gui to handle gender swapping in a pretty UI
+        """a gui to handle gender swapping in a pretty UI
         this commandline option starts up a gui that allows a user
         to swap genders in a set of sheets based on gender definitions;
         this is similar to how the swap() method works but is more
@@ -168,10 +168,11 @@ python -m gender_swap gui
     
     # if what the user asked for is not one of our existing functions, print the help
     if (not args) or (args[0] not in commands):
-        #gui() # TEMP I don't like hardcoding this for application making
-        parser.print_help()
-        help()
-        return 1
+        if not options.version :
+            #gui() # TEMP I don't like hardcoding this for application making
+            parser.print_help()
+            help()
+            return 1
     else:
         # call the function the user named, given the arguments from the command line  
         locals()[args[0]](*args[1:])

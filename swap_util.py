@@ -36,7 +36,9 @@ def process_one_file (file_path, output_path,
     syntax in .rtf files, especially where rich text formatting
     spans the syntax.
     """
-    
+
+    print("*****")
+
     # get the text from the file and gender it
     gendered_text = open_and_gender_sheet(file_path,
                                           gender_defs, gender_ordering,
@@ -295,28 +297,30 @@ def parse_ungendered_sheet (inputText, genderDefinitions, genderOrdering) :
             # check if we have the number of gendered text options we expect
             # based on the genders this character could be
             expectedNumOptions = genderOrder[characterNumber].keys()
-            if (len(genderedOptions) != len(expectedNumOptions)) and printWarnings :
+            if (len(genderedOptions) != len(expectedNumOptions)) :
+                toReturn = matchInfo.group(0)
                 print("The gendered phrase (" + matchInfo.group(0) + ") does not have the expected "
                       + "number of possible gender options for this character (" + str(len(expectedNumOptions)) + ").")
-                print("Parsing for this phrase may not be accurate.")
+                print("This phrase will not be parsed.")
+            else :
             
-            # get the index we want based on the character's gender
-            tempIndex = get_gender_index (genderDefs[characterNumber], genderOrder[characterNumber])
+                # get the index we want based on the character's gender
+                tempIndex = get_gender_index (genderDefs[characterNumber], genderOrder[characterNumber])
 
-            #print("tempIndex: " + str(tempIndex))
-            #print("genderedOptions: " + str(genderedOptions))
+                #print("tempIndex: " + str(tempIndex))
+                #print("genderedOptions: " + str(genderedOptions))
 
-            # pull the gendered term
-            toReturn = genderedOptions[tempIndex].strip()
-            
-            # if we're printing warnings, check the appropriateness of the various terms
-            if printWarnings :
-                
-                for index in range(len(genderedOptions)) :
-                    term = genderedOptions[index].strip()
-                    if index in genderOrder[characterNumber].keys() :
-                        expectedGender = genderOrder[characterNumber][index].strip()
-                        check_gendered_term (term, expectedGender, matchInfo.group(0))
+                # pull the gendered term
+                toReturn = genderedOptions[tempIndex].strip() #+ " " # TODO, why does this need an extra space?
+
+                # if we're printing warnings, check the appropriateness of the various terms
+                if printWarnings :
+
+                    for index in range(len(genderedOptions)) :
+                        term = genderedOptions[index].strip()
+                        if index in genderOrder[characterNumber].keys() :
+                            expectedGender = genderOrder[characterNumber][index].strip()
+                            check_gendered_term (term, expectedGender, matchInfo.group(0))
             
         else :
             
@@ -324,7 +328,9 @@ def parse_ungendered_sheet (inputText, genderDefinitions, genderOrdering) :
             if printWarnings :
                 print ("Warning, unable to find character number " + str(characterNumber)
                        + " in character list. The following phrase will not be processed: " + toReturn)
-        
+
+        #print("Returning gendered text: \"" + str(toReturn) + "\"")
+
         return toReturn
     
     outputText = re.sub(genderedWordPattern, cleanup_gender_fn, inputText, flags=re.DOTALL)
