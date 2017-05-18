@@ -1,0 +1,160 @@
+<html>
+<head>
+	<title>Gender Swap LARP Tool</title>
+	<link rel="stylesheet" title="General" href="../general.css" type="text/css" media="screen">
+	<link rel="shortcut icon" href="../favicon.ico">
+</head>
+<body>
+
+
+
+<div class="nicebox"><h1>Gender Swap LARP Tool</h1></div>
+
+
+<div class="nicebox">
+
+
+<blockquote>
+
+<div class="floatingPictureRight" width="486"><img src="./changeIcon.png" height="300"></div>
+
+<p>
+Download pre-built versions (version 0.5): <br>
+<a href="../pre-built/gender_swap-0.5.app.zip">MacOSX Version</a><br>
+<a href="../pre-built/gender_swap-0.5.exe.zip">Windows Version</a><br>
+</p>
+<p>
+The prebuilt versions don't require you to install any other software, but they only offer the GUI interface. You can see an example of the gender-list formatting <a href="./example_genderList.txt">here</a>. 
+</p>
+<p>
+The source for this program is available <a href="https://github.com/valleyviolet/gender_swap">on Github</a> if you wish to modify it or run it on the command line. 
+</p>
+<p>
+An HTML version of the README file documentation is appended below for reference.
+</p>
+
+<hr>
+
+<h1>gender_swap</h1>
+
+<p>A tool for swapping genders in LARP materials using simple markup syntax.</p>
+
+<hr>
+
+<p>The gender_swap utility is a tool for setting gendered text in multiple files so that it remains consistent. It was created to allow writers of Live Action RolePlaying Games (LARPs) to change the genders of multiple characters based on who is cast in those roles.</p>
+
+<p>There are currently two ways to use the utility: it can be run purely via the command line or it includes a GUI interface. In order to use the GUI you will need to install PyQt4. The pure command line version should run fine whether or not you have PyQt4 on your system.</p>
+
+<p>There is also a packaged version of this application available in the repository's "pre-built" directory for Windows and MacOS. The packaged version only offers the GUI interface, but does not require any supporting installations (Python, PyQt4, etc. are all included).</p>
+
+<p>The utility can currently re-gender txt and rtf files. It's not particularly smart about how it handles rtf documents, so there are some known bugs in how formatting spanning the gender markup can be broken up during processing. </p>
+
+<p>As of version 0.5 the gender_swap utility can handle two neutral gender options (they and ze) as well as traditional male and female pronouns. The format of the gender-list file has changed slightly to support this feature.</p>
+
+<h3>Setting Up Your Files</h3>
+
+<p>In order to specify text for the various genders in your files, you'll need to use some very simple markup language. First you must create a gender-list text file that records the genders the characters will be gendered to. The genders set in this file will change as you use it for different runs of a game. </p>
+
+<p>The project comes with an example gender-list. Your gender-list file can be named whatever you want but it must be a .txt file. For each character whose gender can change, you must assign them a unique character number and have a line in your gender-list in the form:</p>
+
+<pre><code>Character Name:   Number: possible genders for this character separated by /'s: Female or Male or They or Ze
+</code></pre>
+
+<p>The number must be an integer. An example line might look like:</p>
+
+<pre><code>Joe: 02: female/male/neutral they: Male
+</code></pre>
+
+<p>The possible gender options should be in the order you intend to list the gendered text for Joe in your character sheets. </p>
+
+<p>In any documents that mention Joe you will need to identify text that depends on Joe's gender. For example:</p>
+
+<pre><code>Joe was an enterprising young man.
+</code></pre>
+
+<p>For each instance of gendered text, add markup with the options for alternate gendered versions of the character. Because Joe is defined as having the options "female/male/neutral they" This would look like:</p>
+
+<pre><code>[Character Number: Female Text / Male Text / Neutral They Text]
+</code></pre>
+
+<p>In our example the sentence might become:</p>
+
+<pre><code>Joe was an enterprising young [02: woman/man/person].
+</code></pre>
+
+<p>You can replace larger pieces of text spanning multiple lines or even paragraphs with a single expression. If you're using rtf, the markup can't span half of formatting like bold, but it is ok to bold a larger section of text includes an expression (in that case the rtf formatting tags will be outside the expression and won't get mangled by the utility when the expression is processed). </p>
+
+<p>The utility also offers the option to gender the file names themselves. This is especially handy for character sheets where the character's name changes with their gender. For Joe's sheet the syntax would be:</p>
+
+<pre><code>character number.female text.male text.other gender text.whatever text you like.rtf or txt
+</code></pre>
+
+<p>So Joe's sheet's file name might look like:</p>
+
+<pre><code>02.Josephine.Joe.J.Hunter_sheet.txt
+</code></pre>
+
+<p>When processed with Joe set to Male in the gender list, it would become:</p>
+
+<pre><code>02.Joe.Hunter_sheet.txt
+</code></pre>
+
+<h3>Running from the Command Line</h3>
+
+<p>The command line version of the utility takes the path to the gender-list, the input directory where the files you want to gender are, and the output directory where you want your freshly gendered files. The command is in the format:</p>
+
+<pre><code>python -m gender_swap swap -g genderList_201310run.txt -i ./character_sheets -o ./201310genderedSheets
+</code></pre>
+
+<p>The command line has help (-h) to describe the various options in more detail. </p>
+
+<h3>Running the GUI</h3>
+
+<p>If you are using a packaged version of the utility, you can start the GUI interface by runing the .app or .exe file.</p>
+
+<p>If you are using the command line the following call will start the GUI:</p>
+
+<pre><code>python -m gender_swap gui
+</code></pre>
+
+<p><img src="./GUI_open.png"></p>
+
+<p>Click on the "Load Gender List" button in the "Gender Definitions" tab and select your gender-list file. The program will load the file into the table below the button.</p>
+
+<p><img src="./GUI_listloaded.png"></p>
+
+<p>Next select the Files and Processing tab.</p>
+
+<p><img src="./GUI_filestab.png"></p>
+
+<p>Click the "Select" button and choose the output directory you want to use. The output directory path should appear to the left of the button. If all your character sheets are in one directory, check the "load from directory" check box. Click the "Load Files" button and select either the directory with your character sheets or the individual sheets. </p>
+
+<p><img src="./GUI_filesselected.png"></p>
+
+<p>The paths to the character sheets will be loaded into the table below. If you wish to remove a file from this list you can either select it and hit the delete key. If you want to remove all the files click the "Clear" button.</p>
+
+<p>If your character sheet names are formatted to be gendered, check the "also process file names to gender them" check box. Then click the Process button. For medium length sheets (about 3 to 4 pages of text) it takes the application about a half second per sheet, so wait a few seconds. </p>
+
+<p>Your output directory should now contain the gendered files.</p>
+
+<h3>License</h3>
+
+<p>This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.</p>
+
+<p>This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.</p>
+
+<p>You should have received a copy of the GNU General Public License
+along with this program.  If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>.</p>
+
+</blockquote>
+
+</div>
+
+</body>
+</html>

@@ -9,7 +9,7 @@ The gender_swap utility is a tool for setting gendered text in multiple files so
 
 There are currently two ways to use the utility: it can be run purely via the command line or it includes a GUI interface. In order to use the GUI you will need to install PyQt4. The pure command line version should run fine whether or not you have PyQt4 on your system.
 
-There is also [a packaged version of this application](http://www.digitalchangeling.com/gender_swap_pg/index.html) available for Windows and MacOS. The packaged version only offers the GUI interface, but does not require any supporting installations (Python, PyQt4, etc. are all included).
+There is also a packaged version of this application available in the repository's "pre-built" directory for Windows and MacOS. The packaged version only offers the GUI interface, but does not require any supporting installations (Python, PyQt4, etc. are all included).
 
 The utility can currently re-gender txt and rtf files. It's not particularly smart about how it handles rtf documents, so there are some known bugs in how formatting spanning the gender markup can be broken up during processing. 
 
@@ -71,19 +71,19 @@ If you are using the command line the following call will start the GUI:
 
     python -m gender_swap gui
 
-![The GUI on startup](http://www.digitalchangeling.com/gender_swap_pg/GUI_open.png "The GUI on startup")
+![The GUI on startup](./doc/GUI_open.png "The GUI on startup")
 
 Click on the "Load Gender List" button in the "Gender Definitions" tab and select your gender-list file. The program will load the file into the table below the button.
 
-![The gender-list loaded in the GUI](http://www.digitalchangeling.com/gender_swap_pg/GUI_listloaded.png "The gender-list loaded in the GUI")
+![The gender-list loaded in the GUI](./doc/GUI_listloaded.png "The gender-list loaded in the GUI")
 
 Next select the Files and Processing tab.
 
-![The Files and Processing tab](http://www.digitalchangeling.com/gender_swap_pg/GUI_filestab.png "The Files and Processing tab")
+![The Files and Processing tab](./doc/GUI_filestab.png "The Files and Processing tab")
 
 Click the "Select" button and choose the output directory you want to use. The output directory path should appear to the left of the button. If all your character sheets are in one directory, check the "load from directory" check box. Click the "Load Files" button and select either the directory with your character sheets or the individual sheets. 
 
-![The GUI with sheets loaded](http://www.digitalchangeling.com/gender_swap_pg/GUI_filesselected.png "The GUI with sheets loaded")
+![The GUI with sheets loaded](./doc/GUI_filesselected.png "The GUI with sheets loaded")
 
 The paths to the character sheets will be loaded into the table below. If you wish to remove a file from this list you can either select it and hit the delete key. If you want to remove all the files click the "Clear" button.
 
