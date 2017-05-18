@@ -205,6 +205,9 @@ def parse_genderlist_file (genderData) :
     # parse the information for each line since the file should be one char per line
     for line in genderData :
         
+        # make sure we don't get screwed over by non-breaking spaces (fuck you Google Docs)
+        line = line.replace("\xc2\xa0", " ")
+        
         # split the line and handle the easy stuff
         [name, number, gendersList, genderText] = line.split(":")
         name        = name.strip()
