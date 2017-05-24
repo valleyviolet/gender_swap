@@ -31,6 +31,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 Note: I've moved to packaging this using PyInstaller. The build command is:
     PyInstaller -w --onefile ./gender_swap.py
 (run in the gender_swap source directory)
+
+The -w option is the one that gets rid of the console, I'd rather not do that,
+because my message passing isn't sufficiently set up yet. So for now let's use
+this command to build instead:
+    PyInstaller --onefile ./gender_swap.py
+(run in the gender_swap source directory)
 """
 
 import sys
@@ -64,7 +70,7 @@ else:
 
 setup(
     name="Gender Swap Tool",
-    version="0.5",
+    version="0.6",
     zip_safe = True,
     entry_points = { 'console_scripts': [ 'gender_swap = gender_swap:main' ] },
     packages = find_packages('.'),

@@ -56,7 +56,7 @@ python -m gender_swap gui
     
     # display the version
     if options.version :
-        print ("gender_swap, version 0.5 \n") # because having a version history is cool
+        print ("gender_swap, version 0.6 \n") # because having a version history is cool
 
     # set up the commands dictionary
     commands = {}
