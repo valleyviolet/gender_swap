@@ -230,7 +230,8 @@ class GenderSwapGUIModel :
         # if so, we don't want to process them!
         for file_path in list(self.files_to_process_list) :
             file_directory = os.path.dirname(file_path)
-            if os.path.samefile(self.output_path, file_directory) :
+            if os.stat(self.output_path) == os.stat(file_directory) :
+            #if os.path.samefile(self.output_path, file_directory) :
                 print ("Unable to output to directory containing input files.")
                 return
         
