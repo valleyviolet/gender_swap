@@ -238,7 +238,7 @@ def parse_genderlist_file (genderData) :
         genderConst = NEUTRAL_THEY_GENDER if genderText.find("they") >= 0                       else genderConst
         genderConst = NEUTRAL_ZE_GENDER   if genderText.find("ze")   >= 0                       else genderConst
         if genderConst is None :
-            print "Unable to parse selected gender for character as a gender understood by this program."
+            print ("Unable to parse selected gender for character as a gender understood by this program.")
         
         # warn if data is being overwritten
         if number in genderDict :

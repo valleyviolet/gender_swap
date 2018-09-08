@@ -96,7 +96,7 @@ python -m gender_swap gui
         
         # create the output directory if needed
         if not os.path.exists(options.outDirectory):
-            print "Making output directory: " + options.outDirectory
+            print ("Making output directory: " + options.outDirectory)
             os.makedirs(options.outDirectory)
         
         # get a list of files in the input directory
@@ -159,9 +159,9 @@ python -m gender_swap gui
             # print first line of docstring
             for cmd in commands:
                 ds = commands[cmd].__doc__.split('\n')[0]
-                print "%-16s %s" % (cmd,ds)
+                print ("%-16s %s" % (cmd,ds))
         else:
-            print commands[command].__doc__
+            print (commands[command].__doc__)
     
     # all the local public functions are included, collect them up
     commands.update(dict(x for x in locals().items() if x[0] not in prior))    
